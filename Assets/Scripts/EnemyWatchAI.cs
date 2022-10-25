@@ -9,6 +9,7 @@ public class EnemyWatchAI : MonoBehaviour
     EnemyFollowAI _enemyFollowAI;
     Vector3 changeView = Vector3.back;
     Animator _heathensRotation;
+    CapsuleCollider2D _capsuleCollider;
     [SerializeField] float rightSideAngle;
     [SerializeField] float leftSideAngle;
     [SerializeField] FieldOfView _fieldOfView;
@@ -19,6 +20,7 @@ public class EnemyWatchAI : MonoBehaviour
         _heathensRotation = GetComponent<Animator>();
         _enemyFollowAI = GetComponent<EnemyFollowAI>();
         _enemyFollowAI.enabled = false;
+        _capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
 
     void Update() {
@@ -54,11 +56,18 @@ public class EnemyWatchAI : MonoBehaviour
             _heathensRotation.enabled = false;
             _fieldOfView.gameObject.SetActive(false);
             StartCoroutine(StartFollowing());
+            DisableCollider();
         }
 
     }
     IEnumerator StartFollowing() {
         yield return new WaitForSeconds(0.2f);
         _enemyFollowAI.enabled = true;
+    }
+    private void DisableCollider()
+    {
+        if (!_capsuleCollider.IsTouchingLayers(LayerMask.GetMask("Ground"))) { return; }
+        leftBlock.gameObject.SetActive(false);
+        rightBlock.gameObject.SetActive(false);
     }
 }
